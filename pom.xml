@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.zws.clj</groupId>
+    <artifactId>hello-clj</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+
+    <prerequisites>
+        <maven>3.0.0</maven>
+    </prerequisites>
+
+    <properties>
+        <clojure.version>1.7.0</clojure.version>
+        <clojure.test.set>!integration.*</clojure.test.set>
+        <clojure.test.declared.namespace.only>false</clojure.test.declared.namespace.only>
+        <java.unit.test.exclude>org.apache.storm.testing.IntegrationTest</java.unit.test.exclude>
+        <java.unit.test.include>**/Test*.java, **/*Test.java, **/*TestCase.java</java.unit.test.include>    <!--maven surefire plugin default test list-->
+        <maven-surefire.version>2.18.1</maven-surefire.version>
+
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure</artifactId>
+            <version>${clojure.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>all-tests</id>
+            <properties>
+                <java.integration.test.include>**/*.java</java.integration.test.include>
+                <java.integration.test.group>org.apache.storm.testing.IntegrationTest</java.integration.test.group>
+                <clojure.test.set>*.*</clojure.test.set>
+            </properties>
+        </profile>
+    </profiles>
+
+    <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire.version}</version>
+                    <configuration>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <excludedGroups>${java.unit.test.exclude}</excludedGroups>
+                        <includes>
+                            <include>${java.unit.test.include}</include>
+                        </includes>
+                        <argLine>-Xmx1536m</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-surefire.version}</version>
+                    <configuration>
+                        <includes>
+                            <include>${java.integration.test.include}</include>
+                        </includes>
+                        <groups>${java.integration.test.group}</groups>  <!--set in integration-test the profile-->
+                        <argLine>-Xmx1536m</argLine>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.9</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.theoryinpractise</groupId>
+                    <artifactId>clojure-maven-plugin</artifactId>
+                    <version>1.7.1</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>2.16</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>2.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>../conf</directory>
+            </resource>
+            <resource>
+                <directory>../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <!--
+                    storm-core doesn't package jquery, etc. so the stock
+                    apache LICENSE file is okay. We do want our version
+                    of the NOTICE file, however
+                    -->
+                    <include>NOTICE</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/resources</directory>
+                <excludes>
+                    <exclude>storm-core-version-info.properties</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${basedir}/src/resources</directory>
+                <includes>
+                    <include>storm-core-version-info.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/dev</directory>
+            </testResource>
+            <testResource>
+                <directory>test/resources</directory>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.theoryinpractise</groupId>
+                <artifactId>clojure-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <sourceDirectories>
+                        <sourceDirectory>src/main/clj</sourceDirectory>
+                    </sourceDirectories>
+                    <testSourceDirectories>
+                        <testSourceDirectory>src/test/clj</testSourceDirectory>
+                    </testSourceDirectories>
+                    <warnOnReflection>false</warnOnReflection>
+                    <copyDeclaredNamespaceOnly>true</copyDeclaredNamespaceOnly>
+                    <copiedNamespaces>
+                        <copiedNamespace>none</copiedNamespace>
+                    </copiedNamespaces>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>compile-clojure</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-clojure</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <junitOutput>true</junitOutput>
+                            <testScript>test/resources/test_runner.clj</testScript>
+                            <!-- argLine is set by JaCoCo for code coverage -->
+                            <vmargs>-Xmx1536m ${argLine} ${test.extra.args}</vmargs>
+                            <!-- Run clojure unit tests or all tests (including integration tests) depending on the profile enabled -->
+                            <testNamespaces>
+                                <testNamespace>${clojure.test.set}</testNamespace>
+                            </testNamespaces>
+                            <testDeclaredNamespaceOnly>${clojure.test.declared.namespace.only}</testDeclaredNamespaceOnly>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
+                    <docletArtifact>
+                        <groupId>ch.raffael.pegdown-doclet</groupId>
+                        <artifactId>pegdown-doclet</artifactId>
+                        <version>1.1</version>
+                    </docletArtifact>
+                    <useStandardDocletOptions>true</useStandardDocletOptions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

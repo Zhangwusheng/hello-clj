@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="cljtest" />
+        <module name="hello-clj" />
+        <module name="test" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="cljtest" target="1.7" />
+      <module name="hello-clj" target="1.7" />
+      <module name="test" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
